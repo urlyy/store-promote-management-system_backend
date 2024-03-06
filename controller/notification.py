@@ -9,15 +9,23 @@ from utils import my_jwt, file_util
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def get_notifications(authorization: Union[str, None] = Header(None)):
     user_id = my_jwt.get_user_id(authorization)
     sql = DB_Notification.select().where(DB_Notification.rcver_id == user_id)
-    notifications = list(sql.dicts())
+    notes = []
+    for row in sql:
+        noti = {
+            "id":row.id,
+            "rcverId":row.rcver_id,
+            "text":row.text,
+            "param":row.param,
+            "type":row.type,
+        }
+        DB_Notification.update(has_read=HAS_READ).where(DB_Notification.id == row.id).execute()
+        notes.append(noti)
     # 标为已读
-    # for noti in notifications:
-    #     DB_Notification.update(has_read=HAS_READ).where(noti)
-    return Response.ok(data={"notifications": notifications})
+    return Response.ok(data={"notifications": notes})
 
 
 @router.get("/count/unread")

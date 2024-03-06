@@ -1,6 +1,6 @@
 server:
-#  host: localhost
-  host:  192.168.1.106
+#  host: 192.168.1.4
+  host: 172.20.10.2
   port: 8008
   static_dir: static
 postgres:
@@ -9,6 +9,7 @@ postgres:
   user: postgres
   password: root
   database: qpr
+#  database: recommend
 redis:
   host: 192.168.88.132
   port: 6379
@@ -16,4 +17,3 @@ redis:
   db: 0
 jwt:
   secret: qpr
-

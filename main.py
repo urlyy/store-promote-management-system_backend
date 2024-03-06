@@ -1,21 +1,34 @@
 import re
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, applications, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 import uvicorn
-from starlette.responses import JSONResponse
-
-from utils import config, my_jwt
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from utils import config
+import recommend
 
 app = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    scheduler: AsyncIOScheduler = AsyncIOScheduler()
+    scheduler.start()
+    @scheduler.scheduled_job('interval', minutes=60)
+    async def cron_job():
+        # 定时重新训练
+        recommend.retrain()
+    yield
+    scheduler.shutdown()
+
 
 
 def create_app():
     app = FastAPI(
+        lifespan=lifespan,
         title="店铺推荐平台后端服务",
         version="1.0.0",
         description="全部接口",
@@ -29,7 +42,6 @@ def create_app():
         allow_methods=["*"],
         allow_headers=["*"]
     )
-
     # 解决无法访问Swagger的问题
     def swagger_monkey_patch(*args, **kwargs):
         return get_swagger_ui_html(
@@ -37,7 +49,6 @@ def create_app():
             swagger_js_url='https://cdn.bootcdn.net/ajax/libs/swagger-ui/4.10.3/swagger-ui-bundle.js',
             swagger_css_url='https://cdn.bootcdn.net/ajax/libs/swagger-ui/4.10.3/swagger-ui.css'
         )
-
     applications.get_swagger_ui_html = swagger_monkey_patch
     return app
 
@@ -54,7 +65,6 @@ def set_route(app: FastAPI):
     app.include_router(controller.promotion.router, prefix="/promotion", tags=["promotion"])
     app.include_router(controller.private_message.router, prefix="/private_msg", tags=["private_message"])
     app.include_router(controller.notification.router, prefix="/notification", tags=["notification"])
-
 
 def set_middleware(app: FastAPI):
     # 全局token拦截
@@ -77,11 +87,17 @@ def set_middleware(app: FastAPI):
         return response
 
 
+
+
+
+
+
 if __name__ == '__main__':
     # 创建fastapi的服务和socketio的服务，并整合
     app = create_app()
     set_route(app)
     set_middleware(app)
-    uvicorn.run(app, host=config.get("server.host"), port=config.get("server.port")
 
-                )
+
+
+    uvicorn.run(app, host=config.get("server.host"), port=config.get("server.port"))

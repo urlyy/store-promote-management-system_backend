@@ -11,7 +11,8 @@ STATUS_FAIL = 2
 class Comment2Promotion(BaseModel):
     user_id = IntegerField()
     text = CharField()
-    status = IntegerField(default=STATUS_WATING)
+    status = IntegerField(default=STATUS_PASS)
     promotion_id = IntegerField()
+    merchant_id = IntegerField()
     class Meta:
         table_name = "comment2promotion"

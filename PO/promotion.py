@@ -4,16 +4,18 @@ from peewee import CharField, IntegerField, ForeignKeyField, BooleanField, DateT
 from PO.base import BaseModel
 from playhouse.postgres_ext import  ArrayField
 
-STATUS_WATING = 0
+STATUS_WAITING = 0
 STATUS_PASS = 1
 STATUS_FAIL = 2
 
 class Promotion(BaseModel):
-    user_id = IntegerField()
+    merchant_id = IntegerField()
     text = CharField()
     imgs = ArrayField(CharField)
-    status = IntegerField(default=STATUS_WATING)
+    status = IntegerField(default=STATUS_WAITING)
     is_top = BooleanField(default=False)
+    comment_num = IntegerField(default=0)
+    like_num = IntegerField(default=0)
 
     class Meta:
         table_name = "promotion"

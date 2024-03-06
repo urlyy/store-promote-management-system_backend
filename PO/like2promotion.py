@@ -6,5 +6,6 @@ from PO.base import BaseModel
 class Like2Promotion(BaseModel):
     user_id = IntegerField()
     promotion_id = IntegerField()
+    merchant_id = IntegerField()
     class Meta:
         table_name = "like2promotion"

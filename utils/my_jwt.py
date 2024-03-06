@@ -9,7 +9,7 @@ secret_key = config.get("jwt.secret")
 def create_jwt(user_id: int) -> str:
     data = {
         # 公共声明
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),  # 过期时间
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(weeks=10000),  # 过期时间
         'iat': datetime.datetime.utcnow(),  # 开始时间
         'iss': 'czq',  # (Issuer) 指明此token的签发者
         # 私有声明

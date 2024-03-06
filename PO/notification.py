@@ -12,6 +12,7 @@ TYPE_PRIVATE_MESSAGE = 1
 TYPE_FOLLOW = 2
 TYPE_LIKE = 3
 TYPE_COMMENT = 4
+TYPE_NEW_PROMOTION = 5
 
 
 class Notification(BaseModel):
@@ -19,7 +20,7 @@ class Notification(BaseModel):
     text = CharField()
     has_read = BooleanField(default=NOT_READ)
     param = JSONField(default={})
-    type=IntegerField()
+    type = IntegerField()
 
     class Meta:
         table_name = "notification"

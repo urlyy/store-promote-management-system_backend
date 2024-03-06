@@ -7,7 +7,7 @@ import os
 router = APIRouter()
 
 
-@router.post("/")
+@router.post("")
 def upload(file: UploadFile):
     url = file_util.save2local(file.file.read(), file.filename)
     return Response.ok({"file": url})

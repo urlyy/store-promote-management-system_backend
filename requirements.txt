@@ -1,0 +1,9 @@
+fastapi==0.109.0
+peewee==3.17.0
+jsonpickle==3.0.2
+PyJWT==2.8.0
+PyYAML==6.0.1
+python-multipart==0.0.6
+uvicorn==0.25.0
+lightfm==1.17
+faker==23.3.0

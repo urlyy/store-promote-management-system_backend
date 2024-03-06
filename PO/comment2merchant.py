@@ -14,7 +14,7 @@ class Comment2Merchant(BaseModel):
     text = CharField()
     star = IntegerField(default=5,db_column="_star")
     imgs = ArrayField(CharField)
-    status = IntegerField(default=STATUS_WATING)
+    status = IntegerField(default=STATUS_PASS)
 
 
     class Meta:
