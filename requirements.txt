@@ -7,3 +7,6 @@ python-multipart==0.0.6
 uvicorn==0.25.0
 lightfm==1.17
 faker==23.3.0
+APScheduler==3.10.4
+snownlp==0.12.3
+psycopg2==2.9.9
