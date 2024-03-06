@@ -9,11 +9,5 @@ postgres:
   user: postgres
   password: root
   database: qpr
-#  database: recommend
-redis:
-  host: 192.168.88.132
-  port: 6379
-  password: root
-  db: 0
 jwt:
   secret: qpr
