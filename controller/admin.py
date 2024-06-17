@@ -70,7 +70,6 @@ async def get_merchants(page_num: int = 1):
     sql = DB_User.select(DB_User, DB_MerchantMeta).where(DB_User.role == ROLE_MERCHANT).order_by(DB_User.id.desc()) \
         .join(DB_MerchantMeta, on=DB_User.id == DB_MerchantMeta.user_id) \
         .offset((page_num - 1) * USERS_PAGE_SIZE).limit(USERS_PAGE_SIZE)
-
     merchants = []
     for row in sql:
         u, m = row, row.merchantmeta
@@ -193,38 +192,7 @@ async def pass_promotion(promotion_id: int):
     return Response.ok()
 
 
-@router.get("/merchant/data")
-async def get_merchant_data(authorization: Union[str, None] = Header(None)):
-    # 准备数据
-    my_id = my_jwt.get_user_id(authorization)
-    user = DB_User.select().where(DB_User.id == my_id).first()
-    merchant = DB_MerchantMeta.select().where(DB_MerchantMeta.user_id == my_id).first()
-    promotions = list(
-        DB_Promotion.select().where((DB_Promotion.merchant_id == my_id) & (DB_Promotion.is_deleted == False)))
-    comment2promotion_num = reduce(lambda a, b: a + b.comment_num, promotions, 0)
-    promotion_like_num = reduce(lambda a, b: a + b.like_num, promotions, 0)
-    max_like_promotion = max(promotions, key=lambda obj: obj.like_num)
-    max_comment_promotion = max(promotions, key=lambda obj: obj.comment_num)
-    sql = DB_Comment2Merchant.select().where(DB_Comment2Merchant.merchant_id == my_id)
-    stars = [0, 0, 0, 0, 0]
-    sentiments = [0, 0]
-    for row in sql:
-        stars[row.star - 1] += 1
-        score = SnowNLP(row.text).sentiments
-        if score > 0.5:
-            sentiments[1] += 1
-        else:
-            sentiments[0] += 1
-    average_promotion_num = DB_MerchantMeta \
-        .select(fn.AVG(DB_MerchantMeta.promotion_num).alias('average'))[0].average
-
-    def trans_promotion(p):
-        return {
-            "id": p.id,
-            "text": p.text,
-            "imgs": p.imgs,
-            "createTime": p.create_time,
-        }
+d
 
     data = {
         "promotionNum": merchant.promotion_num,
@@ -260,7 +228,7 @@ async def deny_promotion(id: int):
 
 
 @router.post("/comment2promotion/pass/{id}")
-async def pass_promotion(id: int):
+async def pass_promotion_comment(id: int):
     DB_Comment2Promotion.update(status=STATUS_PASS).where(DB_Comment2Promotion.id == id).execute()
     return Response.ok()
 
